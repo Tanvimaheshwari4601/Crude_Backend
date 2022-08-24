@@ -1,10 +1,10 @@
 package net.user_details.controller;
 
 
+import net.user_details.dto.Login;
 import net.user_details.exception.ResourceNotFoundException;
 import net.user_details.model.User;
 import net.user_details.userservice.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class UserController {
 
     //create new user in details
     @PostMapping
-    public User createEmployee(@Valid  @RequestBody User user) {
+    public User createUser(@Valid  @RequestBody User user) {
         return uservice.save(user);
     }
 
@@ -64,7 +64,7 @@ public class UserController {
 
     //delete the user details
     @DeleteMapping("{id}")
-    public ResponseEntity<HttpStatus> deleteEmployee(@PathVariable long id){
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable long id){
 
         User user = uservice.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
@@ -74,4 +74,13 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
+    @PostMapping("/login")
+    public User loginUser(@Valid  @RequestBody Login login) {
+        System.out.println(login.emailid);
+        System.out.println(login.password);
+        return new User();
+    }
+
+
+
 }
