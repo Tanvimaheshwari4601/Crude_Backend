@@ -32,4 +32,10 @@ public class UserService {
     public Object findAll() {
         return userRepository.findAll();
     }
+
+    public  Optional<User> findByEmail(String emailid){
+        return userRepository.findByEmailid(emailid);
+    }
+
+
 }

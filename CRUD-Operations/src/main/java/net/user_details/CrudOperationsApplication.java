@@ -17,14 +17,14 @@ public class CrudOperationsApplication implements CommandLineRunner {
 	private UserRepository userrepository;
 	@Override
 	public void run(String... args) throws Exception {
-		User user=new User();
-		user.setFirstname("Tanvi");
-		user.setLastname("Maheshwari");
-		user.setPassword("abcdefgh");
-		user.setEmailid("tanvimaheshwari67@gmail.com");
-		user.setPhonenumber("1234567890");
-		user.setCity("Udaipur");
-		userrepository.save(user);
+//		User user=new User();
+//		user.setFirstname("Tanvi");
+//		user.setLastname("Maheshwari");
+//		user.setPassword("abcdefgh");
+//		user.setEmailid("tanvimaheshwari67@gmail.com");
+//		user.setPhonenumber("1234567890");
+//		user.setCity("Udaipur");
+//		userrepository.save(user);
 
 
 

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -77,8 +78,14 @@ public class UserController {
     @PostMapping("/login")
     public User loginUser(@Valid  @RequestBody Login login) {
         System.out.println(login.emailid);
-        System.out.println(login.password);
-        return new User();
+        System.out.println(login.password.toString());
+        Optional<User> user =uservice.findByEmail(login.emailid);
+
+        if(!user.isPresent() || !user.get().getPassword().equals(login.password)){
+            throw new ResourceNotFoundException("Invalid Credentials");
+        }
+
+        return user.get();
     }
 
 
