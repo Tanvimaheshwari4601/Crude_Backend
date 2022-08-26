@@ -4,7 +4,7 @@ package net.user_details.controller;
 import net.user_details.dto.Login;
 import net.user_details.exception.ResourceNotFoundException;
 import net.user_details.model.User;
-import net.user_details.userservice.UserService;
+import net.user_details.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,13 @@ public class UserController {
     //create new user in details
     @PostMapping
     public User createUser(@Valid  @RequestBody User user) {
-        return uservice.save(user);
+        Optional<User> userObj=uservice.findByEmail(user.getEmailid());
+        if(userObj.isPresent()){
+            throw new ResourceNotFoundException("User already exist");
+        }
+        User savedUser = uservice.save(user);
+        savedUser.setPassword(null);
+        return savedUser;
     }
 
 
@@ -80,12 +86,13 @@ public class UserController {
         System.out.println(login.emailid);
         System.out.println(login.password.toString());
         Optional<User> user =uservice.findByEmail(login.emailid);
+        User userObj = user.get();
 
-        if(!user.isPresent() || !user.get().getPassword().equals(login.password)){
+        if(!user.isPresent() || !userObj.getPassword().equals(login.password)){
             throw new ResourceNotFoundException("Invalid Credentials");
         }
-
-        return user.get();
+        userObj.setPassword(null);
+        return userObj;
     }
 
 

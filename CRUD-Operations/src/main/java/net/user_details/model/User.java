@@ -47,9 +47,10 @@ public class User {
     @Size(min = 10,max=10, message = "Enter valid 10 digit number")
     private String phonenumber;
 
-//    @NotEmpty
-//    @Column(name = "activity_status",nullable = false)
-//    private boolean activitystatus;
+    @NotEmpty
+    @Column(name = "role",nullable = false)
+    private String role;
+
 
 
 

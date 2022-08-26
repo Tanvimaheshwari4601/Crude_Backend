@@ -1,8 +1,8 @@
-package net.user_details.userservice;
+package net.user_details.service;
 
 
 import net.user_details.model.User;
-import net.user_details.userrepository.Repository.UserRepository;
+import net.user_details.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package net.user_details.userrepository.Repository;
+package net.user_details.repository;
 
 
 import net.user_details.model.User;

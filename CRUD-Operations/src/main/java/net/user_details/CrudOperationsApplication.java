@@ -1,7 +1,6 @@
 package net.user_details;
 
-import net.user_details.userrepository.Repository.UserRepository;
-import net.user_details.model.User;
+import net.user_details.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -24,6 +23,7 @@ public class CrudOperationsApplication implements CommandLineRunner {
 //		user.setEmailid("tanvimaheshwari67@gmail.com");
 //		user.setPhonenumber("1234567890");
 //		user.setCity("Udaipur");
+//		user.setRole("Active");
 //		userrepository.save(user);
 
 
