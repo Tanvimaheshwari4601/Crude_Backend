@@ -35,7 +35,7 @@ public class Product {
 
     @Column(name = "price",nullable = false)
     @NotEmpty
-    private double price;
+    private String price;
 
     @NotEmpty
     @Column(name = "seller_id",nullable = false)
