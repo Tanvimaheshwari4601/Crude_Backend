@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,6 +36,15 @@ public class UserService {
 
     public  Optional<User> findByEmail(String emailid){
         return userRepository.findByEmailid(emailid);
+}
+
+    public Object getAllAdmin(){
+        return userRepository.findByRole("Admin");
+    }
+
+    public List<User> getAllApprovedUser(Boolean isApproved){
+        return userRepository.findByApproved(isApproved);
+
     }
 
 

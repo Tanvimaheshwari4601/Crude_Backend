@@ -51,6 +51,9 @@ public class User {
     @Column(name = "role",nullable = false)
     private String role;
 
+    @Column(name ="approved" , nullable = false)
+    private Boolean approved=true;
+
 
 
 

@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.Blob;
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,14 @@ public class UserController {
         Optional<User> userObj=uservice.findByEmail(user.getEmailid());
         if(userObj.isPresent()){
             throw new ResourceNotFoundException("User already exist");
+        }
+        if(user.getRole().equals("Admin")){
+            user.setApproved(false);
+            System.out.println("admin user");
+        }
+        else{
+            user.setApproved(true);
+            System.out.println(" user");
         }
         User savedUser = uservice.save(user);
         savedUser.setPassword(null);
@@ -86,14 +96,42 @@ public class UserController {
         System.out.println(login.emailid);
         System.out.println(login.password.toString());
         Optional<User> user =uservice.findByEmail(login.emailid);
-        User userObj = user.get();
+//        User userObj = user.get();
 
-        if(!user.isPresent() || !userObj.getPassword().equals(login.password)){
+        if(!user.isPresent() || !user.get().getPassword().equals(login.password)){
             throw new ResourceNotFoundException("Invalid Credentials");
         }
-        userObj.setPassword(null);
-        return userObj;
+        user.get().setPassword(null);
+        return user.get();
     }
+
+    @GetMapping("/adminUser")
+    public List<User> getAdmin(){
+        return (List<User>) uservice.getAllAdmin();
+    }
+
+
+    @GetMapping("/getApprovedUsers/{currentUserId}")
+    public List<User> getAllApprovedUser(@PathVariable long currentUserId){
+        System.out.println(currentUserId);
+        List<User> users = uservice.getAllApprovedUser(Boolean.TRUE);
+
+        return users;
+
+    }
+
+
+
+//    @PatchMapping("{id}")
+//    public Boolean approveStatus(@PathVariable long id){
+//        User user = uservice.findById(id)
+//                .orElseThrow(() -> new ResourceNotFoundException("No user exist with such id: " + id));
+//        user.setApproved(!user.getApproved());
+//        uservice.save(user);
+//        return user.getApproved();
+//
+//    }
+
 
 
 
