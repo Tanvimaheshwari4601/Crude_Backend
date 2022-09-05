@@ -41,11 +41,11 @@ public class UserController {
         }
         if(user.getRole().equals("Admin")){
             user.setApproved(false);
-            System.out.println("admin user");
+//            System.out.println("admin user");
         }
         else{
             user.setApproved(true);
-            System.out.println(" user");
+//            System.out.println(" user");
         }
         User savedUser = uservice.save(user);
         savedUser.setPassword(null);
@@ -105,7 +105,7 @@ public class UserController {
         return user.get();
     }
 
-    @GetMapping("/adminUser")
+    @GetMapping("/getAdmins")
     public List<User> getAdmin(){
         return (List<User>) uservice.getAllAdmin();
     }
@@ -114,23 +114,27 @@ public class UserController {
     @GetMapping("/getApprovedUsers/{currentUserId}")
     public List<User> getAllApprovedUser(@PathVariable long currentUserId){
         System.out.println(currentUserId);
+
         List<User> users = uservice.getAllApprovedUser(Boolean.TRUE);
 
         return users;
 
     }
 
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<User> adminAccess(@PathVariable long id){
+        User adminAccess = uservice.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
+        adminAccess.setApproved(Boolean.TRUE);
+        uservice.save(adminAccess);
+        return ResponseEntity.ok(adminAccess);
+    }
 
 
-//    @PatchMapping("{id}")
-//    public Boolean approveStatus(@PathVariable long id){
-//        User user = uservice.findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("No user exist with such id: " + id));
-//        user.setApproved(!user.getApproved());
-//        uservice.save(user);
-//        return user.getApproved();
-//
-//    }
+
+
+
+
 
 
 
