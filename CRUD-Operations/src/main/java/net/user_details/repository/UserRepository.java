@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
 //    List<User> findAllApprovedUsers(String role);
 
-    List<User> findByApproved(Boolean isApproved);
+    List<User> findByApprovedStatusAndIdNot(String approved, long id );
 
 
 

@@ -54,6 +54,9 @@ public class User {
     @Column(name ="approved" , nullable = false)
     private Boolean approved=true;
 
+    @Column(name ="approved_status" , nullable = false)
+    private String approvedStatus="PENDING";
+
 
 
 

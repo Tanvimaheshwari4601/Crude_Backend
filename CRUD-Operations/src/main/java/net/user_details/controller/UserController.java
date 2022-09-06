@@ -40,10 +40,13 @@ public class UserController {
             throw new ResourceNotFoundException("User already exist");
         }
         if(user.getRole().equals("Admin")){
+            user.setApprovedStatus("PENDING");
             user.setApproved(false);
 //            System.out.println("admin user");
         }
         else{
+            user.setApprovedStatus("APPROVED");
+
             user.setApproved(true);
 //            System.out.println(" user");
         }
@@ -98,8 +101,15 @@ public class UserController {
         Optional<User> user =uservice.findByEmail(login.emailid);
 //        User userObj = user.get();
 
+
         if(!user.isPresent() || !user.get().getPassword().equals(login.password)){
             throw new ResourceNotFoundException("Invalid Credentials");
+
+        }
+        if(!user.get().getApproved()){
+            throw new ResourceNotFoundException("Your account is not approved yet.");
+
+
         }
         user.get().setPassword(null);
         return user.get();
@@ -115,7 +125,7 @@ public class UserController {
     public List<User> getAllApprovedUser(@PathVariable long currentUserId){
         System.out.println(currentUserId);
 
-        List<User> users = uservice.getAllApprovedUser(Boolean.TRUE);
+        List<User> users = uservice.getAllApprovedUser("APPROVED", currentUserId);
 
         return users;
 
@@ -125,18 +135,19 @@ public class UserController {
     public ResponseEntity<User> adminAccess(@PathVariable long id){
         User adminAccess = uservice.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
-        adminAccess.setApproved(Boolean.TRUE);
+
+        adminAccess.setApprovedStatus("APPROVED");
+
         uservice.save(adminAccess);
         return ResponseEntity.ok(adminAccess);
     }
-
-
-
-
-
-
-
-
-
+    @PostMapping("/{id}/deny")
+    public ResponseEntity<User> adminAccessDeny(@PathVariable long id){
+        User adminAccessDeny = uservice.findById(id).
+                orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
+        adminAccessDeny.setApprovedStatus("REJECTED");
+        uservice.save(adminAccessDeny);
+        return ResponseEntity.ok(adminAccessDeny);
+    }
 
 }

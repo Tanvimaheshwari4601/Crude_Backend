@@ -42,8 +42,8 @@ public class UserService {
         return userRepository.findByRole("Admin");
     }
 
-    public List<User> getAllApprovedUser(Boolean isApproved){
-        return userRepository.findByApproved(isApproved);
+    public List<User> getAllApprovedUser(String approved, long id){
+        return userRepository.findByApprovedStatusAndIdNot(approved, id);
 
     }
 
