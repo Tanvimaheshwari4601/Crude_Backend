@@ -4,15 +4,17 @@ package net.user_details.controller;
 import net.user_details.dto.Login;
 import net.user_details.exception.ResourceNotFoundException;
 import net.user_details.model.User;
+import net.user_details.requestmodel.UserRequestModel;
 import net.user_details.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.Blob;
-import java.sql.SQLOutput;
+
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +22,15 @@ import java.util.Optional;
 @RestController
 @RequestMapping( "/api/v1/user")
 public class UserController {
+
+    private static final String APPROVED = "APPROVED";
+    private static final String PENDING = "PENDING";
+    private static final String REJECTED = "REJECTED";
+
+    private static final String MESSAGE = "No user exist with such id: ";
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Autowired
     private UserService uservice;
 
@@ -34,23 +45,24 @@ public class UserController {
 
     //create new user in details
     @PostMapping
-    public User createUser(@Valid  @RequestBody User user) {
+    public User createUser(@Valid  @RequestBody UserRequestModel user) {
         Optional<User> userObj=uservice.findByEmail(user.getEmailid());
         if(userObj.isPresent()){
             throw new ResourceNotFoundException("User already exist");
         }
         if(user.getRole().equals("Admin")){
-            user.setApprovedStatus("PENDING");
+            user.setApprovedStatus(PENDING);
             user.setApproved(false);
-//            System.out.println("admin user");
         }
         else{
-            user.setApprovedStatus("APPROVED");
+            user.setApprovedStatus(APPROVED);
 
             user.setApproved(true);
-//            System.out.println(" user");
         }
-        User savedUser = uservice.save(user);
+
+        User convertedUser = convertToEntity(user);
+        System.out.println("Converted User" + convertedUser.getEmailid());
+        User savedUser = uservice.save(convertedUser);
         savedUser.setPassword(null);
         return savedUser;
     }
@@ -60,21 +72,21 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<Object> getUserById(@PathVariable long id){
         Object user= uservice.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No User Exist with such id" + id));
+                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + id));
         return ResponseEntity.ok(user);
     }
 
     //Update the user details
     @PutMapping("{id}")
-    public ResponseEntity<User> updateUser(@PathVariable long id,@RequestBody User user_details) {
+    public ResponseEntity<User> updateUser(@PathVariable long id, @RequestBody UserRequestModel user) {
 //      IF
         User updateUser = uservice.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No user exist with such id: " + id));
-        updateUser.setFirstname(user_details.getFirstname());
-        updateUser.setLastname(user_details.getLastname());
-        updateUser.setEmailid(user_details.getEmailid());
-        updateUser.setCity(user_details.getCity());
-        updateUser.setPhonenumber(user_details.getPhonenumber());
+                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + id));
+        updateUser.setFirstname(user.getFirstname());
+        updateUser.setLastname(user.getLastname());
+        updateUser.setEmailid(user.getEmailid());
+        updateUser.setCity(user.getCity());
+        updateUser.setPhonenumber(user.getPhonenumber());
 
         uservice.save(updateUser);
 
@@ -87,7 +99,7 @@ public class UserController {
     public ResponseEntity<HttpStatus> deleteUser(@PathVariable long id){
 
         User user = uservice.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + id));
 
         uservice.delete(user);
 
@@ -96,17 +108,16 @@ public class UserController {
     }
     @PostMapping("/login")
     public User loginUser(@Valid  @RequestBody Login login) {
-        System.out.println(login.emailid);
-        System.out.println(login.password.toString());
+
         Optional<User> user =uservice.findByEmail(login.emailid);
-//        User userObj = user.get();
 
 
         if(!user.isPresent() || !user.get().getPassword().equals(login.password)){
             throw new ResourceNotFoundException("Invalid Credentials");
 
         }
-        if(!user.get().getApproved()){
+        boolean status = user.get().getApproved();
+        if(!status){
             throw new ResourceNotFoundException("Your account is not approved yet.");
 
 
@@ -123,12 +134,7 @@ public class UserController {
 
     @GetMapping("/getApprovedUsers/{currentUserId}")
     public List<User> getAllApprovedUser(@PathVariable long currentUserId){
-        System.out.println(currentUserId);
-
-        List<User> users = uservice.getAllApprovedUser("APPROVED", currentUserId);
-
-        return users;
-
+        return uservice.getAllApprovedUser(APPROVED, currentUserId);
     }
 
     @PostMapping("/{id}/approve")
@@ -136,7 +142,8 @@ public class UserController {
         User adminAccess = uservice.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
 
-        adminAccess.setApprovedStatus("APPROVED");
+        adminAccess.setApprovedStatus(APPROVED);
+        adminAccess.setApproved(Boolean.TRUE);
 
         uservice.save(adminAccess);
         return ResponseEntity.ok(adminAccess);
@@ -145,9 +152,19 @@ public class UserController {
     public ResponseEntity<User> adminAccessDeny(@PathVariable long id){
         User adminAccessDeny = uservice.findById(id).
                 orElseThrow(() -> new ResourceNotFoundException("No user exist with such id:  " + id));
-        adminAccessDeny.setApprovedStatus("REJECTED");
+        adminAccessDeny.setApprovedStatus(REJECTED);
+        adminAccessDeny.setApproved(Boolean.FALSE);
         uservice.save(adminAccessDeny);
         return ResponseEntity.ok(adminAccessDeny);
+    }
+    private UserRequestModel convertToDto(User user) {
+        UserRequestModel userRequestModel = modelMapper.map(user, UserRequestModel.class);
+        return userRequestModel;
+    }
+
+    private User convertToEntity(UserRequestModel userRequestModel)  {
+        User user = modelMapper.map(userRequestModel, User.class);
+        return user;
     }
 
 }

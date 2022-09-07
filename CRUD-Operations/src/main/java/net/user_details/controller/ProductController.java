@@ -1,16 +1,16 @@
 package net.user_details.controller;
 
-import net.bytebuddy.implementation.bytecode.assign.primitive.PrimitiveUnboxingDelegate;
+
 import net.user_details.exception.ResourceNotFoundException;
 import net.user_details.model.Product;
-import net.user_details.model.User;
+
 import net.user_details.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -46,15 +46,15 @@ public class ProductController {
 
 
     @PutMapping("{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable long id, @RequestBody Product user_details) {
+    public ResponseEntity<Product> updateProduct(@PathVariable long id, @RequestBody Product product) {
         Product updateProduct=productService.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No product with such id exist: " + id));
 
-        updateProduct.setProductTitle((user_details.getProductTitle()));
-        updateProduct.setCategory((user_details.getCategory()));
-        updateProduct.setPrice((user_details.getPrice()));
-        updateProduct.setImgURL((user_details.getImgURL()));
-        updateProduct.setSellerId((user_details.getSellerId()));
+        updateProduct.setProductTitle((product.getProductTitle()));
+        updateProduct.setCategory((product.getCategory()));
+        updateProduct.setPrice((product.getPrice()));
+        updateProduct.setImgURL((product.getImgURL()));
+        updateProduct.setSellerId((product.getSellerId()));
 
         productService.save(updateProduct);
 

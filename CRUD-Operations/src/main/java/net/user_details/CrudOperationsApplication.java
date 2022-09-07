@@ -1,13 +1,14 @@
 package net.user_details;
 
-import net.user_details.model.Product;
-import net.user_details.model.User;
+
 import net.user_details.repository.ProductRepository;
 import net.user_details.repository.UserRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class CrudOperationsApplication implements CommandLineRunner {
@@ -20,29 +21,15 @@ public class CrudOperationsApplication implements CommandLineRunner {
 
 	@Autowired
 	private ProductRepository productRepository;
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
+	}
 	@Override
 	public void run(String... args) throws Exception {
-//		User user=new User();
-//		user.setFirstname("Tanvi");
-//		user.setLastname("Maheshwari");
-//		user.setPassword("abcdefgh");
-//		user.setEmailid("tanvimaheshwari67@gmail.com");
-//		user.setPhonenumber("1234567890");
-//		user.setCity("Udaipur");
-//		user.setRole("Admin");
-//		userrepository.save(user);
-
+		// Starter function
 	}
 
-//	@Override
-//	public  void run(String... args) throws Exception{
-////		Product product=new Product();
-////		product.setProductTitle("Microwave");
-////		product.setCategory("Electronic");
-////		product.setPrice("45698.0");
-////		product.setImgURL("hggihh");
-////		product.setSellerId("ET-156");
-////		productRepository.save(product);
-//	}
+
 
 }
