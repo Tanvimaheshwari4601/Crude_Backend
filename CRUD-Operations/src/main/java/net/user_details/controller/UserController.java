@@ -59,7 +59,6 @@ public class UserController {
 
             user.setApproved(true);
         }
-
         User convertedUser = convertToEntity(user);
         System.out.println("Converted User" + convertedUser.getEmailid());
         User savedUser = uservice.save(convertedUser);
@@ -82,8 +81,18 @@ public class UserController {
 //      IF
         User updateUser = uservice.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(MESSAGE + id));
+        if(user.getEmailid() != updateUser.getEmailid()){
+            Optional<User> userObj=uservice.findByEmail(user.getEmailid());
+           
+            if(userObj.isPresent()){
+
+                throw new ResourceNotFoundException("Emailid already exist");
+            }
+
+        }
         updateUser.setFirstname(user.getFirstname());
         updateUser.setLastname(user.getLastname());
+
         updateUser.setEmailid(user.getEmailid());
         updateUser.setCity(user.getCity());
         updateUser.setPhonenumber(user.getPhonenumber());
